@@ -1,3 +1,5 @@
+import math
+import tkinter.filedialog
 from copy import deepcopy
 
 import numpy as np
@@ -23,13 +25,14 @@ class MyEnv(gym.Env):
       # Size of the 1D-grid
       self.columns = 7
       self.rows = 6
-      self.start = [0, 0]
+      self.start = [5, 0]
       # Initialize the agent at the right of the grid
       self.agent_pos = (5,0) #linha, coluna
       self.objeto = (2, 3) #linha, coluna
       self.paredes = [(1, 3), (4,0), (4, 1), (4, 3), (4, 4), (4, 5), (4, 6), (5, 6)]
       self.base = [(0, 2), (0, 3), (0, 4)]
       self.matriz_renderizacao = [["" for x in range(7)] for y in range(6)]
+      self.capturou_objeto = False
 
       # Define action and observation space
       # They must be gym.spaces objects
@@ -54,6 +57,12 @@ class MyEnv(gym.Env):
           return False
       return True
 
+  def captura_objeto(self):
+      y = self.current_state[0]
+      x = self.current_state[1]
+      if y == 2 and x in [2,4]:
+          self.capturou_objeto = True
+
   def step(self, action):
       new_state = deepcopy(self.current_state)
 
@@ -74,27 +83,43 @@ class MyEnv(gym.Env):
       #
       # return np.array([self.agent_pos]).astype(np.float32), reward, done, info
       new_state = deepcopy(self.current_state)
+      x = new_state[1]
+      y = new_state[0]
 
+      andou = False
       if action == 0:  # right
-          new_state[1] = min(new_state[1] + 1, self.columns - 1)
+          new_x = x + 1
+          andou = self.pode_andar(new_x, y)
+          new_state[1] = new_x if andou else new_state[1]
       elif action == 1:  # down
-          new_state[0] = max(new_state[0] - 1, 0)
+          new_y = y + 1
+          andou = self.pode_andar(x, new_y)
+          new_state[0] = new_y if andou else new_state[0]
       elif action == 2:  # left
-          new_state[1] = max(new_state[1] - 1, 0)
+          new_x = x - 1
+          andou = self.pode_andar(new_x, y)
+          new_state[1] = new_x if andou else new_state[1]
       elif action == 3:  # up
-          new_state[0] = min(new_state[0] + 1, self.rows - 1)
+          new_y = y - 1
+          andou = self.pode_andar(x, new_y)
+          new_state[0] = new_y if andou else new_state[0]
       else:
           raise Exception("Invalid action.")
       self.current_state = new_state
+      self.captura_objeto()
 
       reward = -1.0
       is_terminal = False
-      if self.current_state[0] == 0 and self.current_state[1] > 0:
-          if self.current_state[1] < self.columns - 1:
-              reward = -100.0
-              self.current_state = deepcopy(self.start)
-          else:
-              is_terminal = True
+
+
+
+      if andou:
+          if (self.current_state[0], self.current_state[1]) in self.base:
+              if self.capturou_objeto: #se chegou na base sem o objeto
+                  is_terminal = True
+              else:
+                  reward = -100.0
+                  self.current_state = deepcopy(self.start)
 
       return self.observation(self.current_state), reward, is_terminal, {}
 
