@@ -17,8 +17,6 @@ class MyEnv(gym.Env):
 
 
 
-
-
   def __init__(self):
       super(MyEnv, self).__init__()
 
@@ -63,48 +61,31 @@ class MyEnv(gym.Env):
       if y == 2 and x in [2,4]:
           self.capturou_objeto = True
 
-  def step(self, action):
-      new_state = deepcopy(self.current_state)
 
-      # ay, ax = self.agent_pos
-      # if action == self.LEFT and self.pode_andar(ax-1, ay):
-      #     self.agent_pos = (ax-1, ay)
-      # elif action == self.RIGHT and self.pode_andar(ax+1, ay):
-      #     self.agent_pos = (ax+1, ay)
-      # elif action == self.UP and self.pode_andar(ax, ay-1):
-      #     self.agent_pos = (ax, ay-1)
-      # elif action == self.DOWN  and self.pode_andar(ax, ay+1):
-      #     self.agent_pos = (ax, ay+1)
-      #
-      # done = self.agent_pos in self.base
-      # reward = 1 if done else 0
-      #
-      # info = {}
-      #
-      # return np.array([self.agent_pos]).astype(np.float32), reward, done, info
-      new_state = deepcopy(self.current_state)
-      x = new_state[1]
-      y = new_state[0]
+  def get_delta(self, state_array, action):
+      new_x = state_array[1]
+      new_y = state_array[0]
 
-      andou = False
-      if action == 0:  # right
-          new_x = x + 1
-          andou = self.pode_andar(new_x, y)
-          new_state[1] = new_x if andou else new_state[1]
-      elif action == 1:  # down
-          new_y = y + 1
-          andou = self.pode_andar(x, new_y)
-          new_state[0] = new_y if andou else new_state[0]
-      elif action == 2:  # left
-          new_x = x - 1
-          andou = self.pode_andar(new_x, y)
-          new_state[1] = new_x if andou else new_state[1]
-      elif action == 3:  # up
-          new_y = y - 1
-          andou = self.pode_andar(x, new_y)
-          new_state[0] = new_y if andou else new_state[0]
+      if action == self.RIGHT:  # right
+          new_x = new_x + 1
+      elif action == self.DOWN:  # down
+          new_y = new_y + 1
+      elif action == self.LEFT:  # left
+          new_x = new_x - 1
+      elif action == self.UP:  # up
+          new_y = new_y - 1
       else:
           raise Exception("Invalid action.")
+
+      return new_x, new_y
+
+  def step(self, action):
+      new_state = deepcopy(self.current_state)
+      new_x, new_y = self.get_delta(new_state, action)
+
+      andou = self.pode_andar(new_x, new_y)
+      new_state = [new_y, new_x] if andou else new_state
+
       self.current_state = new_state
       self.captura_objeto()
 
