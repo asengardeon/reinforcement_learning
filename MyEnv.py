@@ -24,6 +24,7 @@ class MyEnv(gym.Env):
       self.columns = 7
       self.rows = 6
       self.start = [5, 0]
+      self.objeto_state = [2, 3]
       # Initialize the agent at the right of the grid
       self.agent_pos = (5,0) #linha, coluna
       self.objeto = (2, 3) #linha, coluna
@@ -43,17 +44,26 @@ class MyEnv(gym.Env):
       # this can be described both by Discrete and Box space
       self.observation_space = spaces.Discrete(self.rows*self.columns)
 
+
   def observation(self, state):
       return state[0] * self.columns + state[1]
 
-  def pode_andar(self, x, y):
+
+  def colidiu(self, x, y):
       if x < 0 or y < 0 or x >= self.columns or y >= self.rows:
-          return False
+          return True
       if (y, x) == self.objeto:
-          return False
+          return True
       if (y, x) in self.paredes:
-          return False
-      return True
+          return True
+
+      return False
+
+
+  def pode_andar(self, x, y):
+      colidiu = not self.colidiu(x, y)
+      return colidiu
+
 
   def captura_objeto(self):
       y = self.current_state[0]
@@ -93,7 +103,6 @@ class MyEnv(gym.Env):
       is_terminal = False
 
 
-
       if andou:
           if (self.current_state[0], self.current_state[1]) in self.base:
               if self.capturou_objeto: #se chegou na base sem o objeto
@@ -109,6 +118,8 @@ class MyEnv(gym.Env):
     self.agent_pos = (5,0)
     self.objeto = (2, 3)
     self.current_state = self.start
+    self.objeto_state = [2, 3]
+    self.capturou_objeto = False
     return self.observation(self.current_state)
 
 
