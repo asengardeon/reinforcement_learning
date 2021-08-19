@@ -59,10 +59,16 @@ class MyEnv(gym.Env):
 
       return False
 
-
-  def pode_andar(self, x, y):
-      colidiu = not self.colidiu(x, y)
-      return colidiu
+  def pode_andar(self, x, y, action):
+      colide = self.colidiu(x, y)
+      if colide:
+          return False
+      if self.capturou_objeto:
+          new_x, new_y = self.get_delta(self.objeto_state, action)
+          colide = self.colidiu(new_x, new_y)
+          if colide:
+              return False
+      return True
 
 
   def captura_objeto(self):
@@ -92,9 +98,12 @@ class MyEnv(gym.Env):
   def step(self, action):
       new_state = deepcopy(self.current_state)
       new_x, new_y = self.get_delta(new_state, action)
+      new_x_o, new_y_o = self.get_delta(self.objeto_state, action)
 
-      andou = self.pode_andar(new_x, new_y)
+      andou = self.pode_andar(new_x, new_y, action)
       new_state = [new_y, new_x] if andou else new_state
+      if self.capturou_objeto:
+        self.objeto_state = [new_y_o, new_x_o] if andou else self.objeto_state
 
       self.current_state = new_state
       self.captura_objeto()
