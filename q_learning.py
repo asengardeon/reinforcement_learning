@@ -20,7 +20,7 @@ def Qlearning(environment, num_episodes=100, alpha=0.3, gamma=0.9, epsilon=1.0, 
         accumulated_reward = 0
 
         # steps within current episode
-        for step in range(1000):
+        for step in range(300):
 
             # epsilon-greedy action selection
             # exploit with probability 1-epsilon

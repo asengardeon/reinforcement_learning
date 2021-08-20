@@ -116,6 +116,7 @@ class MyEnv(gym.Env):
           if (self.objeto_state[0], self.objeto_state[1]) in self.base:
               if self.capturou_objeto: #se chegou na base sem o objeto
                   is_terminal = True
+                  reward = 1
               else:
                   reward = -100.0
                   self.current_state = deepcopy(self.start)

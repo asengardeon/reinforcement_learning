@@ -37,7 +37,7 @@ def test_env():
 
 
 def execute():
-    num_episodes = 1000
+    num_episodes = 300
     alpha = 0.3
     gamma = 0.9
     epsilon = 1.0
