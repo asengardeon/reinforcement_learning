@@ -6,7 +6,7 @@ Disciplina: Reinforcement Learning
 Aluno: Leandro Vilson Battisti  
 
 
-##Descrição
+## Descrição
 Considere o problema de mundo em grade ilustrado a seguir:
 
 ![Figura1](/imagens/figura1.jpg)
