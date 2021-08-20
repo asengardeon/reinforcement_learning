@@ -87,6 +87,16 @@ gamma | 0.9
 epsilon | 1.0
 decay_epsilon | 0.3
 
+### Resultados
+
+Com esta execução obteves-se os seguites resultados com 300 epocas, com grafico apresentdo na figura2:
+
+Average reward (all episodes): -33.8  
+Average reward (last 10 episodes): -6.0  
+Time execution: 0:00:00.192502 (192 milisegundos)
+
+![Figura2](/imagens/figura2.jpg)
+
 
 
 
