@@ -97,8 +97,23 @@ Time execution: 0:00:00.192502 (192 milisegundos)
 
 ![Figura2](/imagens/figura2.jpg)
 
+#Ambiente
+Pode ser visualizada a implementação no arquivo do colab disponivel aqui no repositório [Reinforcemente_Learning_carregar_objeto](Reinforcemente_Learning_carregar_objeto.ipynb)  
 
+OU
 
+Baixando o projeto, executando o comando abaixo:
 
+```shell
+pipenv install
+```  
+e em seguida
 
+```shell
+python main.py
+```
+
+## requisitos para execução local
+- Python 3.8
+- Pipenv
 
