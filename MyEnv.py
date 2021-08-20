@@ -162,9 +162,9 @@ class MyEnv(gym.Env):
         print(linha)
 
 
-  def pritn_infos(self):
-      print(f"agente: {self.current_state}")
-      print(f"objeto: {self.objeto_state}")
+  def print_infos(self, step, accumulated_reward):
+      print(f"[{step}] = agente: {self.current_state} - objeto: {self.objeto_state} accumulated_reward: {accumulated_reward}")
+      # print(f"objeto: {self.objeto_state}")
 
 
   def close(self):
