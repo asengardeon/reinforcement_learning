@@ -116,6 +116,7 @@ class MyEnv(gym.Env):
           if (self.objeto_state[0], self.objeto_state[1]) in self.base:
               if self.capturou_objeto: #se chegou na base sem o objeto
                   is_terminal = True
+                  reward = 1
               else:
                   reward = -100.0
                   self.current_state = deepcopy(self.start)
@@ -162,9 +163,9 @@ class MyEnv(gym.Env):
         print(linha)
 
 
-  def pritn_infos(self):
-      print(f"agente: {self.current_state}")
-      print(f"objeto: {self.objeto_state}")
+  def print_infos(self, step, accumulated_reward):
+      print(f"[{step}] = agente: {self.current_state} - objeto: {self.objeto_state} accumulated_reward: {accumulated_reward}")
+      # print(f"objeto: {self.objeto_state}")
 
 
   def close(self):

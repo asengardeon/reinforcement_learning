@@ -37,7 +37,7 @@ def test_env():
 
 
 def execute():
-    num_episodes = 100
+    num_episodes = 300
     alpha = 0.3
     gamma = 0.9
     epsilon = 1.0
@@ -50,7 +50,6 @@ def execute():
     # print results
     print("Average reward (all episodes): " + str(sum(rewards) / num_episodes))
     print("Average reward (last 10 episodes): " + str(sum(rewards[-10:]) / 10))
-    env.pritn_infos()
 
     plt.plot(range(num_episodes), rewards)
     plt.xlabel('Episodes')
