@@ -66,3 +66,29 @@ política de exploração ao longo do tempo;
 necessários para resolver a tarefa ao longo do tempo (episódios).  
 (b) Apresente o tempo de processamento necessário para resolver o problema.
 
+
+
+## Solução adotada
+
+A solução para o problema foi baseada na no Cliff Walking, disponivel no [GitHub](https://github.com/caburu/gym-cliffwalking/blob/master/gym_cliffwalking/envs/cliffwalking_env.py) usando o algoritmo Q-learning com gym. ALém disto foram utilziado tambe´ms alguns sites de apoio para entendimento de ambiente:
+- o [Stable Baselines3 Tutorial - Creating a custom Gym environment](https://colab.research.google.com/github/araffin/rl-tutorial-jnrr19/blob/sb3/5_custom_gym_env.ipynb#scrollTo=PQfLBE28SNDr)
+
+
+### Modelo MDP
+O modelo adotado foram foi de quarto estados, sendo eles CIMA, BAIXO, ESQUEDA e DIREITA. 
+Os estados não validos são os de colisões do agente, que são, Sair do mapa, colisão com parede, colisão com objeto e chegar na base sem o objeto. Este estados resetam o cenário ao estado inicial.
+Os passos do modelo são que para cada estado valido ele recebe  uam recompensa de -1(menos um), e caso o estado seja invalido a recompensa é de -100. Caso atinda a base com o objetos em mãos a recompensa é de 1(um) e o estado vai para concluido.
+
+hiperparametro|valor
+-------------|---------
+num_episodes | 200
+alpha | 0.3
+gamma | 0.9
+epsilon | 1.0
+decay_epsilon | 0.3
+
+
+
+
+
+
