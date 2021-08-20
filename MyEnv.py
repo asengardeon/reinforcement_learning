@@ -113,7 +113,7 @@ class MyEnv(gym.Env):
 
 
       if andou:
-          if (self.current_state[0], self.current_state[1]) in self.base:
+          if (self.objeto_state[0], self.objeto_state[1]) in self.base:
               if self.capturou_objeto: #se chegou na base sem o objeto
                   is_terminal = True
               else:
@@ -136,8 +136,8 @@ class MyEnv(gym.Env):
     if mode != 'console':
        raise NotImplementedError()
        # agent is represented as a cross, rest as a dot
-    ay, ax = self.agent_pos
-    oy, ox = self.objeto
+    ay, ax = self.current_state[0], self.current_state[1]
+    oy, ox = self.objeto_state[0], self.objeto_state[1]
 
     for y, x in self.paredes:
         self.matriz_renderizacao[y][x] = "X"
@@ -161,6 +161,10 @@ class MyEnv(gym.Env):
             linha += f"{self.matriz_renderizacao[y][x]}|"
         print(linha)
 
+
+  def pritn_infos(self):
+      print(f"agente: {self.current_state}")
+      print(f"objeto: {self.objeto_state}")
 
 
   def close(self):

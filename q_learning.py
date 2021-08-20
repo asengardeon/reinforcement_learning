@@ -54,13 +54,13 @@ def Qlearning(environment, num_episodes=100, alpha=0.3, gamma=0.9, epsilon=1.0, 
         rewards.append(accumulated_reward)
         epsilons.append(epsilon)
         # só apra ver a posição das peças a cada dex iterações
-        print_count += 1
-        if print_count == 10:
-            print(' ' * 50)
-            print('+' * 50)
-            print(f' estado na epoca {episode}')
-            environment.render()
-            print_count = 0
+        # print_count += 1
+        # if print_count == 10:
+        #     print(' ' * 50)
+        #     print('+' * 50)
+        #     print(f' estado na epoca {episode}')
+        #     environment.render()
+        #     print_count = 0
 
     # render the environment
     environment.render()
