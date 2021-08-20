@@ -41,7 +41,7 @@ def execute():
     alpha = 0.3
     gamma = 0.9
     epsilon = 1.0
-    decay_epsilon = 0.1
+    decay_epsilon = 0.3
 
     env = MyEnv()
     # run Q-learning
@@ -50,6 +50,7 @@ def execute():
     # print results
     print("Average reward (all episodes): " + str(sum(rewards) / num_episodes))
     print("Average reward (last 10 episodes): " + str(sum(rewards[-10:]) / 10))
+    env.pritn_infos()
 
     plt.plot(range(num_episodes), rewards)
     plt.xlabel('Episodes')

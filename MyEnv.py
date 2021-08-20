@@ -17,8 +17,6 @@ class MyEnv(gym.Env):
 
 
 
-
-
   def __init__(self):
       super(MyEnv, self).__init__()
 
@@ -26,6 +24,7 @@ class MyEnv(gym.Env):
       self.columns = 7
       self.rows = 6
       self.start = [5, 0]
+      self.objeto_state = [2, 3]
       # Initialize the agent at the right of the grid
       self.agent_pos = (5,0) #linha, coluna
       self.objeto = (2, 3) #linha, coluna
@@ -45,17 +44,32 @@ class MyEnv(gym.Env):
       # this can be described both by Discrete and Box space
       self.observation_space = spaces.Discrete(self.rows*self.columns)
 
+
   def observation(self, state):
       return state[0] * self.columns + state[1]
 
-  def pode_andar(self, x, y):
+
+  def colidiu(self, x, y):
       if x < 0 or y < 0 or x >= self.columns or y >= self.rows:
-          return False
+          return True
       if (y, x) == self.objeto:
-          return False
+          return True
       if (y, x) in self.paredes:
+          return True
+
+      return False
+
+  def pode_andar(self, x, y, action):
+      colide = self.colidiu(x, y)
+      if colide:
           return False
+      if self.capturou_objeto:
+          new_x, new_y = self.get_delta(self.objeto_state, action)
+          colide = self.colidiu(new_x, new_y)
+          if colide:
+              return False
       return True
+
 
   def captura_objeto(self):
       y = self.current_state[0]
@@ -63,48 +77,34 @@ class MyEnv(gym.Env):
       if y == 2 and x in [2,4]:
           self.capturou_objeto = True
 
-  def step(self, action):
-      new_state = deepcopy(self.current_state)
 
-      # ay, ax = self.agent_pos
-      # if action == self.LEFT and self.pode_andar(ax-1, ay):
-      #     self.agent_pos = (ax-1, ay)
-      # elif action == self.RIGHT and self.pode_andar(ax+1, ay):
-      #     self.agent_pos = (ax+1, ay)
-      # elif action == self.UP and self.pode_andar(ax, ay-1):
-      #     self.agent_pos = (ax, ay-1)
-      # elif action == self.DOWN  and self.pode_andar(ax, ay+1):
-      #     self.agent_pos = (ax, ay+1)
-      #
-      # done = self.agent_pos in self.base
-      # reward = 1 if done else 0
-      #
-      # info = {}
-      #
-      # return np.array([self.agent_pos]).astype(np.float32), reward, done, info
-      new_state = deepcopy(self.current_state)
-      x = new_state[1]
-      y = new_state[0]
+  def get_delta(self, state_array, action):
+      new_x = state_array[1]
+      new_y = state_array[0]
 
-      andou = False
-      if action == 0:  # right
-          new_x = x + 1
-          andou = self.pode_andar(new_x, y)
-          new_state[1] = new_x if andou else new_state[1]
-      elif action == 1:  # down
-          new_y = y + 1
-          andou = self.pode_andar(x, new_y)
-          new_state[0] = new_y if andou else new_state[0]
-      elif action == 2:  # left
-          new_x = x - 1
-          andou = self.pode_andar(new_x, y)
-          new_state[1] = new_x if andou else new_state[1]
-      elif action == 3:  # up
-          new_y = y - 1
-          andou = self.pode_andar(x, new_y)
-          new_state[0] = new_y if andou else new_state[0]
+      if action == self.RIGHT:  # right
+          new_x = new_x + 1
+      elif action == self.DOWN:  # down
+          new_y = new_y + 1
+      elif action == self.LEFT:  # left
+          new_x = new_x - 1
+      elif action == self.UP:  # up
+          new_y = new_y - 1
       else:
           raise Exception("Invalid action.")
+
+      return new_x, new_y
+
+  def step(self, action):
+      new_state = deepcopy(self.current_state)
+      new_x, new_y = self.get_delta(new_state, action)
+      new_x_o, new_y_o = self.get_delta(self.objeto_state, action)
+
+      andou = self.pode_andar(new_x, new_y, action)
+      new_state = [new_y, new_x] if andou else new_state
+      if self.capturou_objeto:
+        self.objeto_state = [new_y_o, new_x_o] if andou else self.objeto_state
+
       self.current_state = new_state
       self.captura_objeto()
 
@@ -112,9 +112,8 @@ class MyEnv(gym.Env):
       is_terminal = False
 
 
-
       if andou:
-          if (self.current_state[0], self.current_state[1]) in self.base:
+          if (self.objeto_state[0], self.objeto_state[1]) in self.base:
               if self.capturou_objeto: #se chegou na base sem o objeto
                   is_terminal = True
               else:
@@ -128,6 +127,8 @@ class MyEnv(gym.Env):
     self.agent_pos = (5,0)
     self.objeto = (2, 3)
     self.current_state = self.start
+    self.objeto_state = [2, 3]
+    self.capturou_objeto = False
     return self.observation(self.current_state)
 
 
@@ -135,8 +136,8 @@ class MyEnv(gym.Env):
     if mode != 'console':
        raise NotImplementedError()
        # agent is represented as a cross, rest as a dot
-    ay, ax = self.agent_pos
-    oy, ox = self.objeto
+    ay, ax = self.current_state[0], self.current_state[1]
+    oy, ox = self.objeto_state[0], self.objeto_state[1]
 
     for y, x in self.paredes:
         self.matriz_renderizacao[y][x] = "X"
@@ -160,6 +161,10 @@ class MyEnv(gym.Env):
             linha += f"{self.matriz_renderizacao[y][x]}|"
         print(linha)
 
+
+  def pritn_infos(self):
+      print(f"agente: {self.current_state}")
+      print(f"objeto: {self.objeto_state}")
 
 
   def close(self):
